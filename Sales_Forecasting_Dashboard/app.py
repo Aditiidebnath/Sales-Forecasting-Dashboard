@@ -1,7 +1,7 @@
-
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import os
 
 # -----------------------------
 # Page Configuration
@@ -12,14 +12,19 @@ st.set_page_config(
     layout="wide"
 )
 
-st.title(" Sales Forecasting & Demand Intelligence System")
+st.title("📊 Sales Forecasting & Demand Intelligence System")
 
 st.write("Interactive Dashboard")
 
 # -----------------------------
+# Base Directory
+# -----------------------------
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# -----------------------------
 # Load Dataset
 # -----------------------------
-df = pd.read_csv("train.csv")
+df = pd.read_csv(os.path.join(BASE_DIR, "train.csv"))
 
 # Convert Order Date
 df["Order Date"] = pd.to_datetime(df["Order Date"])
@@ -49,8 +54,8 @@ if page == "Sales Overview":
 
     st.header("Sales Overview Dashboard")
 
-    yearly = pd.read_csv("yearly_sales.csv")
-    monthly = pd.read_csv("monthly_sales.csv")
+    yearly = pd.read_csv(os.path.join(BASE_DIR, "yearly_sales.csv"))
+    monthly = pd.read_csv(os.path.join(BASE_DIR, "monthly_sales.csv"))
 
     col1, col2 = st.columns(2)
 
@@ -113,15 +118,15 @@ if page == "Sales Overview":
 
     st.plotly_chart(fig3, use_container_width=True)
 
-    # ==========================================
+# ==========================================
 # PAGE 2 : FORECAST EXPLORER
 # ==========================================
 
 elif page == "Forecast Explorer":
 
-    st.header(" Forecast Explorer")
+    st.header("Forecast Explorer")
 
-    forecast = pd.read_csv("forecast_results.csv")
+    forecast = pd.read_csv(os.path.join(BASE_DIR, "forecast_results.csv"))
     forecast["Date"] = pd.to_datetime(forecast["Date"])
 
     option = st.selectbox(
@@ -171,18 +176,17 @@ elif page == "Forecast Explorer":
 
     st.success("Best Model Used: XGBoost")
 
-    # ==========================================
+# ==========================================
 # PAGE 3 : ANOMALY REPORT
 # ==========================================
 
 elif page == "Anomaly Report":
 
-    st.header(" Sales Anomaly Report")
+    st.header("Sales Anomaly Report")
 
-    anomalies = pd.read_csv("anomalies.csv")
+    anomalies = pd.read_csv(os.path.join(BASE_DIR, "anomalies.csv"))
     anomalies["Order Date"] = pd.to_datetime(anomalies["Order Date"])
 
-    # Line chart showing anomaly points
     fig = px.line(
         anomalies,
         x="Order Date",
@@ -199,15 +203,15 @@ elif page == "Anomaly Report":
 
     st.write(f"**Total Anomalies Detected:** {len(anomalies)}")
 
-    # ==========================================
+# ==========================================
 # PAGE 4 : PRODUCT DEMAND SEGMENTS
 # ==========================================
 
 elif page == "Product Demand Segments":
 
-    st.header(" Product Demand Segments")
+    st.header("Product Demand Segments")
 
-    cluster = pd.read_csv("cluster_results.csv")
+    cluster = pd.read_csv(os.path.join(BASE_DIR, "cluster_results.csv"))
 
     st.subheader("Demand Cluster Visualization")
 
@@ -234,3 +238,5 @@ elif page == "Product Demand Segments":
     for c in summary.index:
         st.write(f"**Cluster {c}:**")
         st.write(", ".join(summary[c]))
+
+
